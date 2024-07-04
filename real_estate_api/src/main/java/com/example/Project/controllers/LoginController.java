@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -22,9 +23,14 @@ public class LoginController {
     @Autowired
     private LoginService loginServices;
 
-    @GetMapping("/login")
-    public Login login_authentication(@RequestBody LoginAuth login){
-        return loginServices.login_authentication(login);
+     @PostMapping("/login")
+    public ResponseEntity<Login> loginAuthentication(@RequestBody LoginAuth login) {
+        try {
+            Login authenticatedUser = loginServices.login_authentication(login);
+            return ResponseEntity.ok(authenticatedUser);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        }
     }
 
     @PostMapping("/registration")

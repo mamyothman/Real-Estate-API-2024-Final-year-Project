@@ -43,12 +43,15 @@ public class LoginService {
             prepareSecreteKey(secret);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+            String encrypted = Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
+            System.out.println("Encrypted password: " + encrypted);
+            return encrypted;
         } catch (Exception e) {
             System.out.println("Error while encrypting: " + e.toString());
         }
         return null;
     }
+    
 
     public Login saveUsers(LoginDTO lgn){
         final String secretKey = "maryam_developer@gmail.com";
@@ -93,6 +96,7 @@ public class LoginService {
         Optional<Login> l = login_repository.login_authentication(login.getUsername(), encrypted_password);
         if(l.isPresent()){
             return l.get();
+            
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User was not found");
         }
